@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="GBK"> 
+	<title>OSS UPLOAD FILE</title>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
+	<script src="https://cdn.bootcss.com/vue/2.5.9/vue.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<style>
+		.input-group{ margin-bottom:10px}
+	</style>
+</head>
+<body>
+
+<div class="container">
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			<center>
+			<b>UpLoad File To Your OSS</b>
+			</center>
+		</div>
+		<div class="panel-body" id="submitBody" >
+			<div class="well" v-for="(value, index) in upInfo">
+				<div class="input-group">
+					<span class="input-group-addon">URL</span>
+					<input type="text" class="form-control" placeholder="URL" v-on:change="anaBucketFromUrl(index)" v-model:value="value.url">
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">Bucket</span>
+					<input type="text" class="form-control" placeholder="Bucket" disabled v-model:value="value.bucket">
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">Endpoint</span>
+					<input type="text" class="form-control" placeholder="Endpoint" disabled v-model:value="value.endpoint">
+				</div>
+				<div class="form-group">
+					<input type="file" id="inputfile" v-on:change="getFile($event,index)">
+				</div>
+				<button class="btn btn-primary" v-on:click="uploadFile(index)">Submit</button>
+				<button class="btn btn-danger" v-on:click="delBord(index)">Close</button>
+			</div>
+			<div class="well">
+				<button class="btn btn-primary" v-on:click="addBord">Add New Form</button>
+				<button class="btn btn-primary" v-on:click="uploadAll">Submit All</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script>
+function IsURL(str_url){
+    var strRegex = '^((https|http|ftp|rtsp|mms)?://)'
+            +'?(([0-9a-z_!~*().&=+$%-]+: )?[0-9a-z_!~*().&=+$%-]+@)?' //ftp的user@
+            + '(([0-9]{1,3}.){3}[0-9]{1,3}' 
+            + '|' // 允许IP和DOMAIN（域名）
+            + '([0-9a-z_!~*()-]+.)*' // 域名- www.
+            + '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z].' // 二级域名
+            + '[a-z]{2,6})' // first level domain- .com or .museum
+            + '(:[0-9]{1,4})?' // 端口- :80
+            + '((/?)|' // a slash isn't required if there is no file name
+            + '(/[0-9a-z_!~*().;?:@&=+$,%#-]+)+/?)$';
+    var re=new RegExp(strRegex);
+    if (re.test(str_url)){
+        return (true);
+    }else{
+        return (false);
+    }
+}
+</script>
+<script>
+submitBody = new Vue({
+	el: "#submitBody",
+	data:{
+		upInfo:[
+			{}
+		],
+	},
+	methods: {
+		delBord: function(index){
+			if (this.upInfo.length > 1)
+			{
+				this.upInfo.splice(index,1);
+			}
+		},
+		addBord: function(){
+			this.upInfo.push({})
+		},
+		getFile: function(event,index){
+			//this.file = event.target.files[0];
+            		this.upInfo[index]["file"] = event.target.files[0];
+		},
+		anaBucketFromUrl: function(index){
+			url = this.upInfo[index]["url"];
+			if(IsURL(url) == false){
+                                alert("Invaild URL.");
+                                return -1;
+                        }
+			domain = url.split("//")[1].split("/")[0];
+			endpoint = domain.replace(domain.split(".")[0]+".","")
+			bucket = domain.split(".")[0];
+			Vue.set(this.upInfo[index],"bucket",bucket);
+			Vue.set(this.upInfo[index],"endpoint",endpoint);
+		},
+		uploadFile: function(index){
+			file = this.upInfo[index]["file"];
+			url = this.upInfo[index]["url"];
+			if(url == undefined){
+				alert("URL is Empty.");
+				return -1;
+			}
+			if(IsURL(url) == false){
+				alert("Invaild URL.");
+                                return -1;
+			}
+			if(file == undefined){
+				alert("NO Input File.");
+				return -1;
+			}
+			var formData = new FormData();
+			formData.append("file",file);
+			formData.append("url",url);
+			formData.append("bucket",bucket);
+			formData.append("endpoint",endpoint);
+			axios({
+				method: 'POST',
+				url: '/upload/',
+				data: formData,
+			})
+			.then(function(response){
+				alert(response.data);
+			})
+		},
+		uploadAll: function(){
+			//console.log("up all");
+			for(i in this.upInfo)
+			{
+				//console.log(i)
+				if(this.upInfo[i]["url"] != undefined)
+				{
+					console.log(i)
+					this.uploadFile(parseInt(i));
+				}
+			}
+		}
+	}
+})
+</script>
+</body>
+</html>
