@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import json
+import os
 from flask import Flask,url_for,request
 from configLoader import configLoader 
 from ossController import ossController
@@ -29,7 +30,9 @@ def upload():
 		remoteDes = url.split("//")[-1].lstrip(bucket+"."+endpoint+"/");
 		localfile = "upload-tmp/"+filename;
 		f.save("upload-tmp/"+filename);
-		ans = osscon.UpLoad(remoteDes,localfile);
+		ans = json.dumps(osscon.UpLoad(remoteDes,localfile));
+		f.close();
+		os.remove(localfile);
 		return ans;
 		
 

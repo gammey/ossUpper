@@ -16,8 +16,15 @@ class ossController:
 	def UpLoad(self,remotefile,localfile):
 		service = oss2.Service(self.auth, self.endp);
 		bk = oss2.Bucket(self.auth,"http://"+self.endp,self.bkname);
-		bk.put_object_from_file(remotefile,localfile);
-		return "http://"+self.bkname+"."+self.endp+"/"+remotefile;
+		ans = {};
+		try:
+			bk.put_object_from_file(remotefile,localfile);
+			ans["status"] = 0;
+			ans["info"] = "http://"+self.bkname+"."+self.endp+"/"+remotefile
+			return ans;
+		except:
+			ans["status"] = -1;
+                        ans["info"] = "Upload Failed."
 	def listfile(self,dirpath):
     		_files = []
     		list = os.listdir(dirpath)

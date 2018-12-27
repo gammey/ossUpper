@@ -127,7 +127,7 @@ submitBody = new Vue({
 				data: formData,
 			})
 			.then(function(response){
-				alert(response.data);
+				alert(response.data.info);
 			})
 		},
 		uploadAll: function(){
@@ -137,7 +137,6 @@ submitBody = new Vue({
 				//console.log(i)
 				if(this.upInfo[i]["url"] != undefined)
 				{
-					console.log(i)
 					this.uploadFile(parseInt(i));
 				}
 			}
