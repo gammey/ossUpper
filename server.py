@@ -28,6 +28,8 @@ def upload():
 			return "Endpoint Not Fit.";
 		osscon = ossController(confloader.getAccessId(),confloader.getAccessSecret(),endpoint,bucket);
 		remoteDes = url.split("//")[-1].lstrip(bucket+"."+endpoint+"/");
+		if os.path.exists("upload-tmp") == False:
+			 os.makedirs("upload-tmp"); 
 		localfile = "upload-tmp/"+filename;
 		f.save("upload-tmp/"+filename);
 		ans = json.dumps(osscon.UpLoad(remoteDes,localfile));
