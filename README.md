@@ -1,12 +1,9 @@
 Requirements:
 
 python2.7
-<<<<<<< HEAD
-pip install oss2 flask uwsgi
-=======
 
-pip install oss2 flask
->>>>>>> 55252410ffaa55ec5aabce8830c028e0abd52fa6
+pip install oss2 flask uwsgi
+
 
 
 Configration:
@@ -30,26 +27,24 @@ with ','.
 
 
 Start Server:
-<<<<<<< HEAD
+
 You can start server with command in develop env:
-=======
 
 You can start server with command:
 
->>>>>>> 55252410ffaa55ec5aabce8830c028e0abd52fa6
 python server.py
 
 Or you can start it with nohup:
 
 nohup python server.py &> /dev/null
 
-<<<<<<< HEAD
 You can start server with command in product env:
+
 uwsgi --http 0.0.0.0:5001 --module server:app
+
 Or you can start it with nohup:
+
 nohup uwsgi --http 0.0.0.0:5001 --module server:app &> /dev/null
-=======
->>>>>>> 55252410ffaa55ec5aabce8830c028e0abd52fa6
 
 Use:
 
